@@ -19,10 +19,7 @@ package org.magnum.dataup;
 
 import org.magnum.dataup.model.Video;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 
@@ -30,6 +27,7 @@ import java.util.ArrayList;
 public class VideoController {
 
     private ArrayList<Video> videoList = new ArrayList<>();
+    private static int videoId = 1;
 	/**
 	 * You will need to create one or more Spring controllers to fulfill the
 	 * requirements of the assignment. If you use this file, please rename it
@@ -49,9 +47,9 @@ public class VideoController {
 	@RequestMapping(value = "/video", method = RequestMethod.GET)
     @ResponseBody
 	public ArrayList<Video> getVideos() {
-	    Video vid = new Video();
-	    vid.setTitle("test title");
-	    this.videoList.add(vid);
+	    //Video vid = new Video();
+	    //vid.setTitle("test title");
+	    //this.videoList.add(vid);
 	    return this.videoList;
     }
 
@@ -66,6 +64,30 @@ public class VideoController {
         @RequestParam
         String contentType
     ) {
-	    System.out.println("TODO");
+	    Video newVid = Video.create()
+                .withTitle(title)
+                .withDuration(duration)
+                .withSubject(subject)
+                .withContentType(contentType)
+                .build();
+	    newVid.setId(videoId);
+	    videoId++;
+	    videoList.add(newVid);
     }
+
+    @RequestMapping(value = "/video/{videoId}/data", method = RequestMethod.GET)
+    public Video getVideo(
+            @PathVariable
+            long videoId
+    ) {
+	    for (Video vid : videoList) {
+	        if (vid.getId() == videoId) {
+	            return vid;
+            }
+        }
+	    return null;
+    }
+
+    //@RequestMapping(value = "/video/{videoId}/data", method = RequestMethod.POST)
+    //public V
 }
